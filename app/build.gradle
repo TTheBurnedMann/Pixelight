@@ -1,0 +1,33 @@
+plugins {
+    id 'ru.vyarus.use-python' version '4.0.0'
+    id 'base'
+}
+
+repositories {
+    mavenCentral()
+}
+
+python {
+    pythonBinary = "python"
+}
+
+task installDependencies(type: Exec) {
+    commandLine python.pythonBinary, '-m', 'pip', 'install', '-r', '../requirements/requirements.txt'
+}
+
+tasks.named('build') {
+    dependsOn installDependencies
+}
+
+task runTests(type: Exec) {
+    commandLine python.pythonBinary, '-m', 'pytest', '../tests/' 
+}
+
+runTests.dependsOn installDependencies
+
+task runApp(type: Exec) {
+    commandLine python.pythonBinary, 'main.py'
+}
+
+runApp.dependsOn installDependencies
+
